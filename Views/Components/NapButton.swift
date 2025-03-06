@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NapButton: View {
     let minutes: Int
+    let accentColor: Color
     let action: () -> Void
     
     var body: some View {
@@ -17,13 +18,13 @@ struct NapButton: View {
                             .fill(Color.white.opacity(0.01))
                             .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
                         
-                        // グラデーションの背景
+                        // グラデーションの背景（アクセントカラーを使用）
                         Circle()
                             .fill(
                                 LinearGradient(
                                     gradient: Gradient(colors: [
-                                        Color(.systemGreen).opacity(0.9),
-                                        Color(.systemGreen)
+                                        accentColor.opacity(0.9),
+                                        accentColor
                                     ]),
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing

@@ -1,57 +1,67 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("themeColor") private var themeColor: String = "green"
-    @AppStorage("accentColor") private var accentColor: String = "green"
+    @EnvironmentObject private var themeSettings: ThemeSettings
+    @Environment(\.colorScheme) private var colorScheme
     @AppStorage("useBluetoothAudio") private var useBluetoothAudio: Bool = false
     @AppStorage("alarmSound") private var alarmSound: String = "default"
     @AppStorage("sleepSound") private var sleepSound: String = "none"
     
-    let themeColors = ["light", "dark", "beige"]
+    let backgroundColors = ["white", "black", "gray", "beige", "lightBlue", "lightPink"]
     let accentColors = ["black", "white", "gray", "blue", "red", "green", "pink", "yellow", "orange", "cyan"]
     
     var body: some View {
-        Form {
-            Section(header: Text("テーマ設定")) {
-                Picker("メインカラー", selection: $themeColor) {
-                    Text("ライト").tag("light")
-                    Text("ダーク").tag("dark")
-                    Text("ベージュ").tag("beige")
+        ZStack {
+            // 背景色
+            themeSettings.background()
+                .ignoresSafeArea()
+            
+            Form {
+                Section(header: Text("テーマ設定")) {
+                    Picker("背景色", selection: $themeSettings.backgroundColor) {
+                        Text("白").tag("white")
+                        Text("黒").tag("black")
+                        Text("グレー").tag("gray")
+                        Text("ベージュ").tag("beige")
+                        Text("ライトブルー").tag("lightBlue")
+                        Text("ライトピンク").tag("lightPink")
+                    }
+                    
+                    Picker("アクセントカラー", selection: $themeSettings.accentColor) {
+                        ForEach(accentColors, id: \.self) { color in
+                            Text(colorName(color)).tag(color)
+                        }
+                    }
                 }
                 
-                Picker("アクセントカラー", selection: $accentColor) {
-                    ForEach(accentColors, id: \.self) { color in
-                        Text(colorName(color)).tag(color)
+                Section(header: Text("オーディオ設定")) {
+                    Toggle("Bluetoothイヤホンを使用", isOn: $useBluetoothAudio)
+                    
+                    Picker("アラーム音", selection: $alarmSound) {
+                        Text("デフォルト").tag("default")
+                        Text("ベル").tag("bell")
+                        Text("電子音").tag("electronic")
+                    }
+                    
+                    Picker("睡眠導入音", selection: $sleepSound) {
+                        Text("なし").tag("none")
+                        Text("自然音").tag("nature")
+                        Text("ホワイトノイズ").tag("white_noise")
+                    }
+                }
+                
+                Section(header: Text("アプリについて")) {
+                    HStack {
+                        Text("バージョン")
+                        Spacer()
+                        Text("1.0.0")
+                            .foregroundColor(.secondary)
                     }
                 }
             }
-            
-            Section(header: Text("オーディオ設定")) {
-                Toggle("Bluetoothイヤホンを使用", isOn: $useBluetoothAudio)
-                
-                Picker("アラーム音", selection: $alarmSound) {
-                    Text("デフォルト").tag("default")
-                    Text("ベル").tag("bell")
-                    Text("電子音").tag("electronic")
-                }
-                
-                Picker("睡眠導入音", selection: $sleepSound) {
-                    Text("なし").tag("none")
-                    Text("自然音").tag("nature")
-                    Text("ホワイトノイズ").tag("white_noise")
-                }
-            }
-            
-            Section(header: Text("アプリについて")) {
-                HStack {
-                    Text("バージョン")
-                    Spacer()
-                    Text("1.0.0")
-                        .foregroundColor(.secondary)
-                }
-            }
+            .navigationTitle("設定")
+            .accentColor(themeSettings.accent())
         }
-        .navigationTitle("設定")
     }
     
     func colorName(_ color: String) -> String {
@@ -69,4 +79,4 @@ struct SettingsView: View {
         default: return color
         }
     }
-} 
+}

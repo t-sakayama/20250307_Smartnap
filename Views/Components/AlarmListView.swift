@@ -2,19 +2,22 @@ import SwiftUI
 
 struct AlarmListView: View {
     let alarms: [Alarm]
-    var onDelete: (UUID) -> Void  // 削除用のコールバック関数を追加
+    let accentColor: Color
+    let textColor: Color
+    var onDelete: (UUID) -> Void
     
     var body: some View {
         VStack(alignment: .leading) {
             if !alarms.isEmpty {
                 Text("アクティブなアラーム")
                     .font(.headline)
+                    .foregroundColor(textColor)
                     .padding(.horizontal)
                 
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(alarms) { alarm in
-                            AlarmRow(alarm: alarm, onDelete: onDelete)
+                            AlarmRow(alarm: alarm, accentColor: accentColor, textColor: textColor, onDelete: onDelete)
                         }
                     }
                     .padding(.horizontal)
@@ -22,7 +25,7 @@ struct AlarmListView: View {
             } else {
                 Text("アクティブなアラームはありません")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(textColor.opacity(0.7))
                     .padding()
             }
         }
@@ -31,6 +34,8 @@ struct AlarmListView: View {
 
 struct AlarmRow: View {
     let alarm: Alarm
+    let accentColor: Color
+    let textColor: Color
     let onDelete: (UUID) -> Void
     
     var body: some View {
@@ -38,15 +43,16 @@ struct AlarmRow: View {
             VStack(alignment: .leading) {
                 Text(alarm.timeString)
                     .font(.headline)
+                    .foregroundColor(textColor)
                 Text(alarm.remainingTimeString)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(textColor.opacity(0.7))
             }
             
             Spacer()
             
             Button(action: {
-                onDelete(alarm.id)  // 削除アクション
+                onDelete(alarm.id)
             }) {
                 Image(systemName: "xmark.circle.fill")
                     .foregroundColor(.red)
@@ -56,7 +62,7 @@ struct AlarmRow: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
+                .fill(Color(.systemBackground).opacity(0.3))
                 .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
         )
     }

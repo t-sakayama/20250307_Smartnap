@@ -4,6 +4,7 @@ struct TimeSlider: View {
     @Binding var value: Double
     let minValue: Double = 1
     let maxValue: Double = 60
+    let accentColor: Color
     
     var body: some View {
         VStack(spacing: 8) {
@@ -12,7 +13,7 @@ struct TimeSlider: View {
                 .foregroundColor(.secondary)
             
             Slider(value: $value, in: minValue...maxValue, step: 1)
-                .accentColor(Color(.systemGreen))
+                .accentColor(accentColor)
                 .padding(.horizontal)
             
             HStack {
